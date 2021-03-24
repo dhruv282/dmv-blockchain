@@ -29,10 +29,10 @@ class driver:
             self.address = newAddress
     
     def concat(self):
-        concat =  self.pubkey + self.fname + self.lname + self.address + self.DLexp
+        concat =  self.pubkey + self.fname + self.lname + self.address + self.DLexp.strftime('%m/%d/%Y')
         for v in self.vehicles:
-            concat += v.concat
-        concat += self.realID
+            concat += v.concat()
+        concat += str(self.realID)
         return concat
     
     def generate_driver_signature(self, private_key):

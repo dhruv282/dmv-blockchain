@@ -9,10 +9,10 @@ class entry:
 
     def generate_entry_signature(self, private_keys):
         data = self.datetime
-        for i in len(self.drivers):
+        for i in range(len(self.drivers)):
             d = self.drivers[i]
             data += d.generate_driver_signature(private_keys[i])
-        self.hash = hash_string(data)
+        self.hash = hash_string(data).hexdigest()
         return self.hash
     
     def verify_entry_signature(self):
@@ -24,6 +24,6 @@ class entry:
             if not res:
                 return False
         
-        entry_hash = hash_string(data)
+        entry_hash = hash_string(data).hexdigest()
         
         return entry_hash == self.hash

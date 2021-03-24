@@ -33,10 +33,10 @@ class blockchain:
             genesis_key = "0" * 128
 
             gen_driver = driver(genesis_key, "", "", "", datetime.now())
-            genesis_entry = entry(gen_driver)
+            genesis_entry = entry([gen_driver])
 
             prev_hash = "0"*32
-            genesis_block = block(genesis_entry, 0, prev_hash, genesis_key)
+            genesis_block = block(genesis_entry, 0, prev_hash, genesis_key, genesis_key, genesis=True)
             self.chain.append(genesis_block)
         else:
             raise Exception("chain already initialized")

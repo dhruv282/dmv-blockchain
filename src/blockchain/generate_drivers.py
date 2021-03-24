@@ -23,6 +23,7 @@ def generate_vehicle(pubKey, seed_date):
     vin = generate_random_string(str_len=10, lc=False) + generate_random_string(str_len=7, lc=False, uc=False)
 
     new_vehicle = vehicle(pubKey, model, state, registrationExp, vin)
+    return new_vehicle
 
 def generate_drivers(num_drivers = 10):
     drivers = []
@@ -35,11 +36,11 @@ def generate_drivers(num_drivers = 10):
         address = generate_random_string(str_len=24)
         DLexp = seed_date + timedelta(days=random.randrange(4*30, 8*30))
 
-        new_driver = driver(key_pair.publickey().export_key().decode(), fName, lName, address, DLexp)
+        new_driver = driver(key_pair.publickey().export_key().decode(), fname, lname, address, DLexp)
 
         num_vehicles = random.randrange(5)
         for _ in range(num_vehicles):
-            new_driver.addVehicle(generate_vehicle())
+            new_driver.addVehicle(generate_vehicle(key_pair.publickey().export_key().decode(), seed_date))
         
         drivers.append((new_driver, key_pair))
     

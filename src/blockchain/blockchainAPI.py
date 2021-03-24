@@ -10,14 +10,15 @@ blockchain_records.create_genesis_block()
 
 drivers, driver_keys = generate_drivers(15)
 
-for i in range(len(drivers)):
-    addDriver(drivers[i], [driver_keys[i].export_key().decode()])
-
 def addDriver(driverObjs, driver_private_keys):
     blockchain_records.add_block(driverObjs, 
                                  driver_private_keys, 
                                  universal_miner.publickey().export_key().decode(),
                                  universal_miner.export_key().decode())
+
+
+for i in range(len(drivers)):
+    addDriver([drivers[i]], [driver_keys[i].export_key().decode()])
 
 api = Flask(__name__)
 
