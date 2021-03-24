@@ -3,18 +3,18 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 100px;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+/*@media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
+}*/
 
 .App-header {
-  background-color: #282c34;
+  background-color: #8f8f8f;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +35,81 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Navbar {
+  top: 0px;
+  position: fixed;
+  text-align: center;
+  background-color: #ffaa00;
+}
+
+.Navbar div {
+  display: block;
+  padding-bottom: 5px;
+  color: black;
+}
+
+.Navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+.Navbar li {
+  float: left;
+}
+
+.Navbar li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.Navbar li a:hover:not(.activeNavTab) {
+  background-color: #111;
+}
+
+.activeNavTab {
+  background-color: #4CAF50;
+}
+
+.categoryServices {
+  padding: 100px;
+  background-color: #ffaa00;
+  border-radius: 20px;
+  border-style: solid;
+}
+
+.categoryServices ul {
+  list-style-type: none;
+}
+
+.categoryServices li {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.serviceForm {
+  padding: 100px;
+  background-color: #ffaa00;
+  border-radius: 20px;
+  border-style: solid;
+  color: #111;
+}
+
+.serviceForm label{
+  display: block;
+  margin: 25px;
+}
+
+.serviceForm input{
+  -webkit-appearance: none;
+  -webkit-appearance: textfield;
+  margin: 10px;
+  width: 70px;
 }
