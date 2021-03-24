@@ -1,7 +1,7 @@
 from block import block
 from entry import entry
 from driver import driver
-import time
+from datetime import datetime
 
 class blockchain:
     def __init__(self, difficulty=0):
@@ -31,7 +31,7 @@ class blockchain:
         if len(self.chain) == 0:
             genesis_key = "0" * 128
 
-            gen_driver = driver(genesis_key, "", "", "", time.time())
+            gen_driver = driver(genesis_key, "", "", "", datetime.now())
             genesis_entry = entry(gen_driver)
 
             prev_hash = "0"*32
