@@ -47,7 +47,7 @@ class blockchain:
                 cur_block = self.chain[i]
                 prev_block = self.chain[i-1]
 
-                if not cur_block.prev_hash == prev_block.get_block_hash():
+                if not cur_block.previous_block_hash == prev_block.get_block_hash():
                     return False
                 
                 if not cur_block.verify_miner_signature():

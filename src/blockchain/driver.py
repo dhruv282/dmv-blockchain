@@ -43,4 +43,4 @@ class driver:
         genesis_key = "0"*128
         if self.pubkey == genesis_key:
             return True
-        return verify_signature(self.pubKey, self.signature, self.concat())
+        return verify_signature(self.pubkey, self.signature, self.concat())

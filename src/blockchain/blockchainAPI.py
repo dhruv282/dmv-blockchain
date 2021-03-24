@@ -20,6 +20,8 @@ def addDriver(driverObjs, driver_private_keys):
 for i in range(len(drivers)):
     addDriver([drivers[i]], [driver_keys[i].export_key().decode()])
 
+print(blockchain_records.check_chain_validity())
+
 api = Flask(__name__)
 
 @api.route('/renewRegistration')
