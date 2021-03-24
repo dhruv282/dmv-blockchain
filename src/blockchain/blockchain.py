@@ -40,3 +40,16 @@ class blockchain:
             self.chain.append(genesis_block)
         else:
             raise Exception("chain already initialized")
+    
+    def check_chain_validity(self):
+        if len(self.chain) > 0:
+            for i in range(1, len(self.chain)):
+                cur_block = self.chain[i]
+                prev_block = self.chain[i-1]
+
+                if not cur_block.prev_hash == prev_block.get_block_hash():
+                    return False
+                
+                if not cur_block.verify_miner_signature():
+                    return False
+        return True
