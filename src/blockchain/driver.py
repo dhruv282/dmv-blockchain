@@ -12,24 +12,21 @@ class driver:
     
     def addVehicle(self, vehicle):
         if vehicle in self.vehicles:
-            return False
+            raise Exception("Vehicle already added")
         else:
             self.vehicles.append(vehicle)
-            return True
     
     def updateToRealID(self):
         if self.realID:
-            return False
+            raise Exception("Driver already has a ReadID")
         else:
             self.realID = True
-            return True
     
     def updateAddress(self, newAddress):
         if self.address == newAddress:
-            return False
+            raise Exception("New address same as old address")
         else:
             self.address = newAddress
-            return True
     
     def concat(self):
         concat =  self.pubkey + self.fname + self.lname + self.address + self.DLexp
@@ -41,3 +38,9 @@ class driver:
     def generate_driver_signature(self, private_key):
         self.signature = generate_signature(private_key, self.concat())
         return self.signature
+    
+    def verify_driver_signature(self):
+        genesis_key = "0"*128
+        if self.pubkey == genesis_key:
+            return True
+        return verify_signature(self.pubKey, self.signature, self.concat())

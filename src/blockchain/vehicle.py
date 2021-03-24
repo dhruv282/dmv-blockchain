@@ -10,20 +10,19 @@ class vehicle:
     
     def changeOwner(self, newOwnerPubKey):
         if self.ownerPubkey == newOwnerPubKey:
-            return False
+            raise Exception("New owner same as the old owner")
         else:
             self.ownerPubkey = newOwnerPubKey
-            return True
     
     def updateTitleStateToVA(self):
         if self.titleState == "VA":
-            return False
+            raise Exception("Vehicle already titled in VA")
         else:
             self.titleState = "VA"
-            return True
     
     def renewRegistration(self, durationInMonths):
         self.registrationExp += datetime.timedelta(months=durationInMonths)
     
     def concat(self):
         return self.ownerPubkey + self.model + self.titleState + self.registrationExp.strftime('%m/%d/%Y') + self.vin
+    

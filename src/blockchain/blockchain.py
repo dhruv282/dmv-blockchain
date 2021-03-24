@@ -1,4 +1,7 @@
 from block import block
+from entry import entry
+from driver import driver
+import time
 
 class blockchain:
     def __init__(self, difficulty=0):
@@ -12,6 +15,27 @@ class blockchain:
         if block_num >= 0 and block_num < len(self.chain):
             return self.chain[block_num]
         else:
-            return False
+            raise Exception("Invalid block number")
     
-    def add_block(self):
+    def add_block(self, drivers, driver_private_keys, miner_public_key, miner_private_key):
+        prev_hash = self.get_latest_block().get_block_hash()
+
+        new_entry = entry(drivers)
+
+        new_block = block(new_entry, len(self.chain), prev_hash, miner_public_key, driver_private_keys)
+        new_block.mine_block(self.difficulty)
+
+        self.chain.append(new_block)
+    
+    def create_genesis_block(self):
+        if len(self.chain) == 0:
+            genesis_key = "0" * 128
+
+            gen_driver = driver(genesis_key, "", "", "", time.time())
+            genesis_entry = entry(gen_driver)
+
+            prev_hash = "0"*32
+            genesis_block = block(genesis_entry, 0, prev_hash, genesis_key)
+            self.chain.append(genesis_block)
+        else:
+            raise Exception("chain already initialized")
