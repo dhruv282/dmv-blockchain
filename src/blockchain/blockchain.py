@@ -24,6 +24,7 @@ class blockchain:
 
         new_block = block(new_entry, len(self.chain), prev_hash, miner_public_key, driver_private_keys)
         new_block.mine_block(self.difficulty)
+        new_block.generate_miner_signature(miner_private_key)
 
         self.chain.append(new_block)
     

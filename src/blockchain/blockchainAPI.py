@@ -1,4 +1,23 @@
 from flask import Flask, json, request
+from Crypto.PublicKey import RSA
+from blockchain import blockchain
+from generate_drivers import generate_drivers
+
+universal_miner = RSA.generate(1024)
+
+blockchain_records = blockchain(difficulty=2)
+blockchain_records.create_genesis_block()
+
+drivers, driver_keys = generate_drivers(15)
+
+for i in range(len(drivers)):
+    addDriver(drivers[i], [driver_keys[i].export_key().decode()])
+
+def addDriver(driverObjs, driver_private_keys):
+    blockchain_records.add_block(driverObjs, 
+                                 driver_private_keys, 
+                                 universal_miner.publickey().export_key().decode(),
+                                 universal_miner.export_key().decode())
 
 api = Flask(__name__)
 
