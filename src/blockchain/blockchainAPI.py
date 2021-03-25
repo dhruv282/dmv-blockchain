@@ -1,4 +1,4 @@
-from flask import Flask, json, request
+from flask import Flask, jsonify, request
 from Crypto.PublicKey import RSA
 from blockchain import blockchain
 from generate_drivers import generate_drivers
@@ -22,8 +22,11 @@ for i in range(len(drivers)):
 
 print(blockchain_records.check_chain_validity())
 
-api = Flask(__name__)
+apiServer = Flask(__name__)
 
-@api.route('/renewRegistration')
+@apiServer.route('/numUsers', methods=['GET'])
 def renewReg():
-    user = request.args.get('user')
+    return jsonify({"numUsers": len(drivers)})
+
+if __name__ == "__main__":
+    apiServer.run(debug=True)

@@ -6,8 +6,10 @@ import Navbar from './components/Navbar';
 import OnlineServices from './routes/OnlineServices';
 import Drivers from './routes/Drivers';
 import Vehicles from './routes/Vehicles';
+import {getNumUsers} from './components/apiQueries';
 
 function App() {
+  getNumUsers().then(res=>console.log(res));
   let [optionState, setOptionState] = useState(true);
 
   let navBarItems = [{name: "Online Services", route: "/onlineServices", component: <OnlineServices optionState={optionState} setOptionState={setOptionState} />},
