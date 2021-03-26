@@ -24,6 +24,25 @@
   color: white;
 }
 
+.App-header button {
+  margin: 15px;
+  padding: 10px;
+  font-size: large;
+  background-color: #ffaa00;
+  border-radius: 25px;
+  border-style: solid;
+  border-color: black;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.App-header button:hover {
+  background-color: #333;
+  border-color: #ffaa00;
+  color: white;
+  cursor: pointer;
+}
+
 .App-link {
   color: #61dafb;
 }

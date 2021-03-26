@@ -40,7 +40,7 @@ function VehicleRegistrationRenewal({setOptions, driverAddress, vehicles, setVeh
         event.preventDefault();
         let data = new FormData(event.target);
         renewReg(driverAddress, data).then(data => {
-            setVehicleExp(data.status)
+            setVehicleExp(data.status);
             if(data.status !== ""){
                 console.log(data)
                 let temp = vehicles;

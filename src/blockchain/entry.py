@@ -25,5 +25,4 @@ class entry:
                 return False
         
         entry_hash = hash_string(data).hexdigest()
-        
         return entry_hash == self.hash

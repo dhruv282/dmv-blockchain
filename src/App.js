@@ -6,7 +6,7 @@ import Navbar from './components/Navbar';
 import OnlineServices from './routes/OnlineServices';
 import Drivers from './routes/Drivers';
 import Vehicles from './routes/Vehicles';
-import {getDrivers} from './components/apiQueries';
+import {getDrivers, checkChainValidity} from './components/apiQueries';
 
 function SelectDriver({ allDrivers, setSelectedDriver, setDriverAddress }){
    return(
@@ -60,6 +60,15 @@ function App() {
     <Router>
       <div className="App">
         <header className="App-header">
+          <button onClick={() =>
+            checkChainValidity().then(data => {
+              if (data.result){
+                window.alert("Chain is valid :)");
+              } else {
+                window.alert("Chain is not valid :(")
+              }
+            })
+          }>Check Chain Validity</button>
           <div id="driverSelect">
             <SelectDriver allDrivers={allDrivers} setSelectedDriver={setSelectedDriver} setDriverAddress={setDriverAddress}/>
             <p>{selectedDriver}</p>

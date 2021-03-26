@@ -32,3 +32,10 @@ export function getVehicles(driverAddress){
         .then(data => {return data})
         .catch(error => console.error(error));
 }
+
+export function checkChainValidity(){
+    return fetch("/checkChainValidity")
+        .then(res => res.json())
+        .then(data => {return data})
+        .catch(error => console.error(error));
+}

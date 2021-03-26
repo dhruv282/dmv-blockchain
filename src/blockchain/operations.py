@@ -27,7 +27,7 @@ def verify_signature(public_key, signature, data):
     try:
         pkcs1_15.new(rsa_key).verify(hashed_string, bytes.fromhex(signature))
         return True
-    except:
+    except Exception as e:
         return False
 
 '''

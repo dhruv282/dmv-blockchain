@@ -107,5 +107,9 @@ def getVehicles():
                             "vin": v.vin})
     return jsonify(vehicles)
 
+@apiServer.route('/checkChainValidity', methods=['GET'])
+def checkChainValidity():
+    return jsonify({"result": blockchain_records.check_chain_validity()})
+
 if __name__ == "__main__":
     apiServer.run(debug=True)
