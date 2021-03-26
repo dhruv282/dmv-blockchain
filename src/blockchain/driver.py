@@ -1,4 +1,5 @@
 from operations import generate_signature, verify_signature
+import datetime
 
 class driver:
     def __init__(self, pubkey, fName, lName, address, DLexp):
@@ -28,6 +29,9 @@ class driver:
         else:
             self.address = newAddress
     
+    def renewDL(self, durationInMonths):
+        self.DLexp += datetime.timedelta(days=30*durationInMonths)
+
     def concat(self):
         concat =  self.pubkey + self.fname + self.lname + self.address + self.DLexp.strftime('%m/%d/%Y')
         for v in self.vehicles:

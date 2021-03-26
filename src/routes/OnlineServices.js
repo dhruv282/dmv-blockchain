@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {useRouteMatch} from "react-router-dom";
 
 import ServiceOptions from '../components/ServiceOptions';
-import {getVehicles, renewReg, updateAddress} from '../components/apiQueries';
+import {getVehicles, renewReg, updateAddress, renewDL } from '../components/apiQueries';
 
 export default function OnlineServices({ optionState, setOptionState, driverAddress, allDrivers }){
     let match = useRouteMatch();
@@ -12,7 +12,7 @@ export default function OnlineServices({ optionState, setOptionState, driverAddr
 
     let services = [{name: "Vehicle Registration Renewal", route: `${match.url}/vehicleRegistrationRenewal`, component: <VehicleRegistrationRenewal setOptions={setOptionState} driverAddress={driverAddress} vehicles={vehicles} setVehicles={setVehicles}/>},
                     {name: "Address Change", route: `${match.url}/addressChange`, component: <AddressChange setOptions={setOptionState} allDrivers={allDrivers} driverAddress={driverAddress} />},
-                    {name: "Driver License Renewal", route: `${match.url}/driverLicenseRenewal`},
+                    {name: "Driver License Renewal", route: `${match.url}/driverLicenseRenewal`, component: <DLRenewal setOptions={setOptionState} allDrivers={allDrivers} driverAddress={driverAddress} />},
                     {name: "Report a Vehicle Sold/Traded", route: `${match.url}/vehicleSoldOrTraded`}];
 
     return(
@@ -42,6 +42,7 @@ function VehicleRegistrationRenewal({setOptions, driverAddress, vehicles, setVeh
         renewReg(driverAddress, data).then(data => {
             setVehicleExp(data.status)
             if(data.status !== ""){
+                console.log(data)
                 let temp = vehicles;
                 for(let i in vehicles){
                     if(vehicles[i].vin === selectedVehicle){
@@ -121,6 +122,48 @@ function AddressChange({ setOptions, allDrivers, driverAddress }){
             <form onSubmit={submitHandler}>
                 <label> New Address:
                     <input name="address" style={{width: 350}} type="text"/>
+                </label>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+    );
+}
+
+function DLRenewal({ setOptions, allDrivers, driverAddress }){
+    setOptions(false);
+    
+    let [dlExp, setdlExp] = useState(null);
+
+    useEffect(() => {
+        for(let i in allDrivers){
+            if(allDrivers[i].blockchainAddress === driverAddress){
+                setdlExp(allDrivers[i].DLexp);
+                break;
+            }
+        }
+    }, [driverAddress]);
+
+    let submitHandler = (event) => {
+        event.preventDefault();
+        let data = new FormData(event.target);
+        renewDL(driverAddress, data).then(data =>{
+            setdlExp(data.status);
+            for(let i in allDrivers){
+                if(allDrivers[i].blockchainAddress === driverAddress){
+                    allDrivers[i].DLexp = data.status;
+                    break;
+                }
+            }
+        });
+    }
+
+    return(
+        <div className="serviceForm">
+            <p>{dlExp}</p>
+            <form onSubmit={submitHandler}>
+                <label>
+                    Months:
+                    <input type="number" defaultValue="6" min="1" max="24" name="months"/>
                 </label>
                 <input type="submit" value="Submit"/>
             </form>

@@ -64,6 +64,22 @@ def updateAddress():
         print("ERROR: Could not update address :(")
     return jsonify({"status": newAddress})
 
+@apiServer.route('/renewDL', methods=['POST'])
+def renewDL():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    newDLexp = ""
+
+    try:
+        driverInfo.renewDL(int(request.form["months"]))
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+        newDLexp = driverInfo.DLexp
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update address :(")
+    return jsonify({"status": newDLexp})
+
 @apiServer.route('/drivers', methods=['GET'])
 def getDriverInfo():
     info = []
