@@ -53,3 +53,11 @@ class blockchain:
                 if not cur_block.verify_miner_signature():
                     return False
         return True
+    
+    def get_driver_info(self, driver_public_key):
+        latest_info = None
+        for block in self.chain:
+            for d in block.entry.drivers:
+                if d.pubkey == driver_public_key:
+                    latest_info = d
+        return latest_info
