@@ -44,7 +44,7 @@ def getDriverInfo():
                     "address": dInfo.address,
                     "DLexp": dInfo.DLexp,
                     "realID": dInfo.realID,
-                    "address": dInfo.pubkey})
+                    "blockchainAddress": dInfo.pubkey})
     return jsonify(info)
 
 @apiServer.route('/vehicles', methods=['GET'])
