@@ -2,6 +2,7 @@ from block import block
 from entry import entry
 from driver import driver
 from datetime import datetime
+from copy import deepcopy
 
 class blockchain:
     def __init__(self, difficulty=0):
@@ -60,4 +61,4 @@ class blockchain:
             for d in block.entry.drivers:
                 if d.pubkey == driver_public_key:
                     latest_info = d
-        return latest_info
+        return deepcopy(latest_info)
