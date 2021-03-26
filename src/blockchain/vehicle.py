@@ -21,7 +21,7 @@ class vehicle:
             self.titleState = "VA"
     
     def renewRegistration(self, durationInMonths):
-        self.registrationExp += datetime.timedelta(months=durationInMonths)
+        self.registrationExp += datetime.timedelta(days=30*durationInMonths)
     
     def concat(self):
         return self.ownerPubkey + self.model + self.titleState + self.registrationExp.strftime('%m/%d/%Y') + self.vin

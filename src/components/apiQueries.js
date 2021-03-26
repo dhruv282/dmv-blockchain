@@ -1,7 +1,7 @@
-export function getNumUsers(){
-    return fetch("/numUsers")
+export function renewReg(driverAddress, data){
+    return fetch("/renewReg?driverAddress="+encodeURIComponent(driverAddress), {method: 'POST', body: data})
         .then(res => res.json())
-        .then(data => {return data.numUsers})
+        .then(data => {return data})
         .catch(error => console.error(error));
 }
 
@@ -13,7 +13,7 @@ export function getDrivers(){
 }
 
 export function getVehicles(driverAddress){
-    return fetch("/vehicles?driverAddress="+driverAddress)
+    return fetch("/vehicles?driverAddress="+encodeURIComponent(driverAddress))
         .then(res => res.json())
         .then(data => {return data})
         .catch(error => console.error(error));

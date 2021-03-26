@@ -37,6 +37,16 @@
   }
 }
 
+#driverSelect {
+  display: inline-flex;
+  margin-bottom: 15px;
+}
+
+#driverSelect p{
+  margin: 10px;
+  color: #111;
+}
+
 .Navbar {
   top: 0px;
   position: fixed;
@@ -103,13 +113,17 @@
 }
 
 .serviceForm label{
-  display: block;
+  display: inline-block;
   margin: 25px;
 }
 
+.serviceForm select{
+  margin-left: 5px;
+}
+
 .serviceForm input{
-  -webkit-appearance: none;
-  -webkit-appearance: textfield;
+  /*-webkit-appearance: none;
+  -webkit-appearance: textfield;*/
   margin: 10px;
   width: 70px;
 }

@@ -16,10 +16,10 @@ def addDriver(driverObjs, driver_private_keys):
                                  universal_miner.publickey().export_key().decode(),
                                  universal_miner.export_key().decode())
 
-def getPubKey(fname, lname):
-    for d in drivers:
-        if d.fname == fname and d.lname == lname:
-            return d.pubkey
+def getPrivateKey(pubkey):
+    for d in driver_keys:
+        if pubkey == d.publickey().export_key().decode():
+            return d.export_key().decode()
     return None
 
 for i in range(len(drivers)):
@@ -29,17 +29,32 @@ for i in range(len(drivers)):
 
 apiServer = Flask(__name__)
 
-@apiServer.route('/numUsers', methods=['GET'])
+@apiServer.route('/renewReg', methods=['POST'])
 def renewReg():
-    return jsonify({"numUsers": len(drivers)})
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    newExpDate = ""
+
+    try:
+        for v in driverInfo.vehicles:
+            if v.vin == request.form["vin"]:
+                v.renewRegistration(int(request.form["months"]))
+                driverKey = getPrivateKey(driverInfo.pubkey)
+                blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+                newExpDate = v.registrationExp
+                break
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not renew registration :(")
+    return jsonify({"status": newExpDate})
+
 
 @apiServer.route('/drivers', methods=['GET'])
 def getDriverInfo():
     info = []
     for d in drivers:
         dInfo = blockchain_records.get_driver_info(d.pubkey)
-        info.append({"name": dInfo.fname + " " + dInfo.lname,
-                    "fname": dInfo.fname,
+        info.append({"fname": dInfo.fname,
                     "lname": dInfo.lname,
                     "address": dInfo.address,
                     "DLexp": dInfo.DLexp,
