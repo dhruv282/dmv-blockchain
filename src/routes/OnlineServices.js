@@ -1,8 +1,9 @@
 import {useRouteMatch} from "react-router-dom";
 
 import ServiceOptions from '../components/ServiceOptions';
+import {getVehicles} from '../components/apiQueries';
 
-export default function OnlineServices({ optionState, setOptionState }){
+export default function OnlineServices({ optionState, setOptionState, selectedDriver }){
     let match = useRouteMatch();
 
     let services = [{name: "Vehicle Registration Renewal", route: `${match.url}/vehicleRegistrationRenewal`, component: <VehicleRegistrationRenewal setOptions={setOptionState}/>},
@@ -11,11 +12,11 @@ export default function OnlineServices({ optionState, setOptionState }){
                     {name: "Report a Vehicle Sold/Traded", route: `${match.url}/vehicleSoldOrTraded`}];
 
     return(
-        <ServiceOptions services={services} optionState={optionState} setOptions={setOptionState}/>
+        <ServiceOptions services={services} optionState={optionState} setOptions={setOptionState} selectedDriver={selectedDriver} />
     );
 }
 
-function VehicleRegistrationRenewal({setOptions}){
+function VehicleRegistrationRenewal({setOptions, selectedDriver}){
     setOptions(false);
 
     let submitHandler = function(event){
@@ -23,11 +24,15 @@ function VehicleRegistrationRenewal({setOptions}){
     }
 
     return(
-        <div class="serviceForm">
+        <div className="serviceForm">
             <form>
                 <label>
-                    Last 4 digits of VIN:
-                    <input type="tel" pattern="[0-9]*" maxlength="4" name="vinNum"/>
+                    Vehicle:
+                    <input type="tel" pattern="[0-9]*" maxLength="4" name="vinNum"/>
+                </label>
+                <label>
+                    Months:
+                    <input type="tel" pattern="[0-9]*" maxLength="4" name="vinNum"/>
                 </label>
                 <input type="submit" onSubmit={submitHandler} value="Submit"/>
             </form>

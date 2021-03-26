@@ -10,15 +10,18 @@ export default function ServiceOptions({ services, optionState, setOptions}){
     }
 
     return(
-        <Switch>
-            {routes}
-            {
-                optionState && <div className="categoryServices">
-                    <ul>
-                        { servicesComp }
-                    </ul>
-                </div>
-            }
-        </Switch>
+        <div>
+            <Switch>
+                {routes}
+            </Switch>
+                {
+                    optionState && <div className="categoryServices">
+                        <ul>
+                            { servicesComp }
+                        </ul>
+                    </div>
+                }
+        </div>
+        
     );
 }
