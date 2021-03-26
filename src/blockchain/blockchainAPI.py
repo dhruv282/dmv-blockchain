@@ -48,6 +48,21 @@ def renewReg():
         print("ERROR: Could not renew registration :(")
     return jsonify({"status": newExpDate})
 
+@apiServer.route('/updateAddress', methods=['POST'])
+def updateAddress():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    newAddress = ""
+
+    try:
+        driverInfo.address = request.form["address"]
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+        newAddress = driverInfo.address
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update address :(")
+    return jsonify({"status": newAddress})
 
 @apiServer.route('/drivers', methods=['GET'])
 def getDriverInfo():

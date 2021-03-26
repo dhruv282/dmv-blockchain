@@ -2,16 +2,16 @@ import {useState, useEffect} from 'react';
 import {useRouteMatch} from "react-router-dom";
 
 import ServiceOptions from '../components/ServiceOptions';
-import {getVehicles, renewReg} from '../components/apiQueries';
+import {getVehicles, renewReg, updateAddress} from '../components/apiQueries';
 
-export default function OnlineServices({ optionState, setOptionState, driverAddress }){
+export default function OnlineServices({ optionState, setOptionState, driverAddress, allDrivers }){
     let match = useRouteMatch();
     let [vehicles, setVehicles] = useState(null);
 
     useEffect(() => getVehicles(driverAddress).then(res=>{setVehicles(res)}),[driverAddress]);
 
     let services = [{name: "Vehicle Registration Renewal", route: `${match.url}/vehicleRegistrationRenewal`, component: <VehicleRegistrationRenewal setOptions={setOptionState} driverAddress={driverAddress} vehicles={vehicles} setVehicles={setVehicles}/>},
-                    {name: "Address Change", route: `${match.url}/addressChange`},
+                    {name: "Address Change", route: `${match.url}/addressChange`, component: <AddressChange setOptions={setOptionState} allDrivers={allDrivers} driverAddress={driverAddress} />},
                     {name: "Driver License Renewal", route: `${match.url}/driverLicenseRenewal`},
                     {name: "Report a Vehicle Sold/Traded", route: `${match.url}/vehicleSoldOrTraded`}];
 
@@ -80,6 +80,47 @@ function VehicleRegistrationRenewal({setOptions, driverAddress, vehicles, setVeh
                 <label>
                     Months:
                     <input type="number" defaultValue="6" min="1" max="24" name="months"/>
+                </label>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+    );
+}
+
+function AddressChange({ setOptions, allDrivers, driverAddress }){
+    setOptions(false);
+
+    let [address, setAddress] = useState(null);
+
+    useEffect(() => {
+        for(let i in allDrivers){
+            if(allDrivers[i].blockchainAddress === driverAddress){
+                setAddress(allDrivers[i].address);
+                break;
+            }
+        }
+    }, [driverAddress]);
+
+    let submitHandler = (event) => {
+        event.preventDefault();
+        let data = new FormData(event.target);
+        updateAddress(driverAddress, data).then(data =>{
+            setAddress(data.status);
+            for(let i in allDrivers){
+                if(allDrivers[i].blockchainAddress === driverAddress){
+                    allDrivers[i].address = data.status;
+                    break;
+                }
+            }
+        });
+    }
+
+    return(
+        <div className="serviceForm">
+            <p>{address}</p>
+            <form onSubmit={submitHandler}>
+                <label> New Address:
+                    <input name="address" style={{width: 350}} type="text"/>
                 </label>
                 <input type="submit" value="Submit"/>
             </form>

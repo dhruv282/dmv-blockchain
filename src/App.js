@@ -47,7 +47,7 @@ function App() {
     });
   }
 
-  let navBarItems = [{name: "Online Services", route: "/onlineServices", component: <OnlineServices optionState={optionState} setOptionState={setOptionState} driverAddress={driverAddress} />},
+  let navBarItems = [{name: "Online Services", route: "/onlineServices", component: <OnlineServices optionState={optionState} setOptionState={setOptionState} driverAddress={driverAddress} allDrivers={allDrivers} />},
                     {name: "Driver/ID", route: "/drivers", component: <Drivers optionState={optionState} setOptionState={setOptionState} />},
                     {name: "Vehicles", route: "/vehicles", component: <Vehicles optionState={optionState} setOptionState={setOptionState} />}];
   
