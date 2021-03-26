@@ -10,9 +10,9 @@ def generate_random_string(str_len=8, lc=True, uc=True, digits=True):
     if lc:
         character_pool += string.ascii_lowercase 
     if uc:
-        character_pool += string.digits 
-    if digits:
         character_pool += string.ascii_uppercase
+    if digits:
+        character_pool += string.digits
     
     return ''.join(random.choice(character_pool) for i in range(str_len))
 
