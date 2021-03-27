@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect, url_for, make_response
 from Crypto.PublicKey import RSA
 from blockchain import blockchain
 from generate_drivers import generate_drivers
@@ -47,6 +47,24 @@ def renewReg():
         print(e)
         print("ERROR: Could not renew registration :(")
     return jsonify({"status": newExpDate})
+
+@apiServer.route('/vehicleSoldOrTraded', methods=['POST'])
+def vehicleSoldOrTraded():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    updatedVehicles = []
+
+    try:
+        for v in driverInfo.vehicles:
+            if v.vin != request.form["vin"]:
+                updatedVehicles.append(v)
+        driverInfo.vehicles = updatedVehicles
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not mark vehicle as sold or traded :(")
+    return redirect(url_for('getVehicles', driverAddress=driverAddress))
 
 @apiServer.route('/updateAddress', methods=['POST'])
 def updateAddress():
@@ -105,7 +123,9 @@ def getVehicles():
                             "titleState": v.titleState,
                             "registrationExp": v.registrationExp,
                             "vin": v.vin})
-    return jsonify(vehicles)
+    resp = make_response(jsonify(vehicles))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @apiServer.route('/checkChainValidity', methods=['GET'])
 def checkChainValidity():

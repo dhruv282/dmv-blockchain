@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {useRouteMatch} from "react-router-dom";
 
 import ServiceOptions from '../components/ServiceOptions';
-import {getVehicles, renewReg, updateAddress, renewDL } from '../components/apiQueries';
+import {getVehicles, renewReg, updateAddress, renewDL, vehicleSoldOrTraded } from '../components/apiQueries';
 
 export default function OnlineServices({ optionState, setOptionState, driverAddress, allDrivers }){
     let match = useRouteMatch();
@@ -13,7 +13,7 @@ export default function OnlineServices({ optionState, setOptionState, driverAddr
     let services = [{name: "Vehicle Registration Renewal", route: `${match.url}/vehicleRegistrationRenewal`, component: <VehicleRegistrationRenewal setOptions={setOptionState} driverAddress={driverAddress} vehicles={vehicles} setVehicles={setVehicles}/>},
                     {name: "Address Change", route: `${match.url}/addressChange`, component: <AddressChange setOptions={setOptionState} allDrivers={allDrivers} driverAddress={driverAddress} />},
                     {name: "Driver License Renewal", route: `${match.url}/driverLicenseRenewal`, component: <DLRenewal setOptions={setOptionState} allDrivers={allDrivers} driverAddress={driverAddress} />},
-                    {name: "Report a Vehicle Sold/Traded", route: `${match.url}/vehicleSoldOrTraded`}];
+                    {name: "Report a Vehicle Sold/Traded", route: `${match.url}/vehicleSoldOrTraded`, component: <VehicleSoldOrTraded setOptions={setOptionState} driverAddress={driverAddress} vehicles={vehicles} setVehicles={setVehicles} />}];
 
     return(
         <ServiceOptions services={services} optionState={optionState} setOptions={setOptionState} />
@@ -169,4 +169,46 @@ function DLRenewal({ setOptions, allDrivers, driverAddress }){
             </form>
         </div>
     );
+}
+
+function VehicleSoldOrTraded({ setOptions, allDrivers, driverAddress, vehicles, setVehicles }){
+    setOptions(false);
+
+    let [selectedVehicle, setSelectedVehicle] = useState(null);
+
+    useEffect(() => {
+        if(vehicles && vehicles.length > 0){
+            setSelectedVehicle(vehicles[0].vin);
+        }
+    }, [driverAddress]);
+
+    let submitHandler = (event) => {
+        event.preventDefault();
+        let data = new FormData(event.target);
+        vehicleSoldOrTraded(driverAddress, data).then(data => {
+            setVehicles(data);
+        });
+    }
+
+    return(
+        <div className="serviceForm">
+            <p>{selectedVehicle}</p>
+                <form onSubmit={submitHandler}>
+                    <label>
+                        Vehicle:
+                        <select name="vin" onChange={event => {
+                            setSelectedVehicle(event.target.value);
+                        }}>
+                            {
+                                vehicles && vehicles.map(function(vehicle, i){
+                                    return <option key={i} value={vehicle.vin} >{vehicle.model}</option>
+                                })
+                            }
+                        </select>
+                    </label>
+                    <input type="submit" value="Submit"/>
+                </form>
+        </div>
+    );
+
 }
