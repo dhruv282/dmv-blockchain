@@ -171,7 +171,7 @@ function DLRenewal({ setOptions, allDrivers, driverAddress }){
     );
 }
 
-function VehicleSoldOrTraded({ setOptions, allDrivers, driverAddress, vehicles, setVehicles }){
+function VehicleSoldOrTraded({ setOptions, driverAddress, vehicles, setVehicles }){
     setOptions(false);
 
     let [selectedVehicle, setSelectedVehicle] = useState(null);
