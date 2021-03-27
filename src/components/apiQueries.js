@@ -19,6 +19,13 @@ export function vehicleSoldOrTraded(driverAddress, data){
         .catch(error => console.error(error));
 }
 
+export function createRealID(driverAddress){
+    return fetch("/realID?driverAddress="+encodeURIComponent(driverAddress))
+        .then(res => res.json())
+        .then(data => {return data})
+        .catch(error => console.error(error));
+}
+
 export function updateAddress(driverAddress, data){
     return fetch("/updateAddress?driverAddress="+encodeURIComponent(driverAddress), {method: 'POST', body: data})
         .then(res => res.json())

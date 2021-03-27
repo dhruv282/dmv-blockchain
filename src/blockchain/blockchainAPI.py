@@ -66,6 +66,20 @@ def vehicleSoldOrTraded():
         print("ERROR: Could not mark vehicle as sold or traded :(")
     return redirect(url_for('getVehicles', driverAddress=driverAddress))
 
+@apiServer.route('/realID', methods=['GET'])
+def realID():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+
+    try:
+        driverInfo.realID = True
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not create driver Real ID :(")
+    return redirect(url_for('getDriverInfo', driverAddress=driverAddress))
+
 @apiServer.route('/updateAddress', methods=['POST'])
 def updateAddress():
     driverAddress = request.args.get("driverAddress")
@@ -109,7 +123,9 @@ def getDriverInfo():
                     "DLexp": dInfo.DLexp,
                     "realID": dInfo.realID,
                     "blockchainAddress": dInfo.pubkey})
-    return jsonify(info)
+    resp = make_response(jsonify(info))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @apiServer.route('/vehicles', methods=['GET'])
 def getVehicles():
