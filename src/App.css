@@ -147,15 +147,23 @@
   width: 70px;
 }
 
-#createRealID {
+#createRealID, input[type=submit] {
   width: 200;
   background-color: #333;
   color: white;
+  cursor: pointer;
   border-color: white;
 }
 
-#createRealID:hover {
+#createRealID:hover, input[type=submit]:hover {
   background-color: white;
   color: black;
   border-color: black;
+}
+
+input[type=submit] {
+  padding: 5px;
+  border-radius: 25px;
+  border-style: solid;
+  transition: 0.5s;
 }
