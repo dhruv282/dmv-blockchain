@@ -80,7 +80,7 @@ function VitalRecord({ setOptions, driverAddress, allDrivers, vehicles }){
     }, [vehicles]);
 
     return(
-        driverInfo && <div style={{textAlign: "left", maxHeight: "400px", overflowY: "scroll", padding: "0px 25px"}} className="serviceForm">
+        driverInfo && <div style={{textAlign: "left", height: "450px", overflowY: "scroll", padding: "0px 25px"}} className="serviceForm">
             <h3>Driver Info</h3>
             <p><b>Name:</b> {driverInfo.fname + " " + driverInfo.lname}</p>
             <p><b>Address:</b> {driverInfo.address}</p>

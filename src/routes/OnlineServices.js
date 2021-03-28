@@ -40,9 +40,8 @@ function VehicleRegistrationRenewal({setOptions, driverAddress, vehicles, setVeh
         event.preventDefault();
         let data = new FormData(event.target);
         renewReg(driverAddress, data).then(data => {
-            setVehicleExp(data.status);
             if(data.status !== ""){
-                console.log(data)
+                setVehicleExp(data.status);
                 let temp = vehicles;
                 for(let i in vehicles){
                     if(vehicles[i].vin === selectedVehicle){
@@ -57,33 +56,38 @@ function VehicleRegistrationRenewal({setOptions, driverAddress, vehicles, setVeh
 
     return(
         <div className="serviceForm">
-            <p>{selectedVehicle}</p>
-            <p>{vehicleExp}</p>
-            <form onSubmit={submitHandler}>
-                <label>
-                    Vehicle:
-                    <select name="vin" onChange={event => {
-                        setSelectedVehicle(event.target.value);
-                        for(let i in vehicles){
-                            if(vehicles[i].vin === event.target.value){
-                                setVehicleExp(vehicles[i].registrationExp);
-                                break;
+            {
+            selectedVehicle && <div>
+                <p>{selectedVehicle}</p>
+                <p>{vehicleExp}</p>
+                <form onSubmit={submitHandler}>
+                    <label>
+                        Vehicle:
+                        <select name="vin" onChange={event => {
+                            setSelectedVehicle(event.target.value);
+                            for(let i in vehicles){
+                                if(vehicles[i].vin === event.target.value){
+                                    setVehicleExp(vehicles[i].registrationExp);
+                                    break;
+                                }
                             }
-                        }
-                    }}>
-                        {
-                            vehicles && vehicles.map(function(vehicle, i){
-                                return <option key={i} value={vehicle.vin} >{vehicle.model}</option>
-                            })
-                        }
-                    </select>
-                </label>
-                <label>
-                    Months:
-                    <input type="number" defaultValue="6" min="1" max="24" name="months"/>
-                </label>
-                <input type="submit" value="Submit"/>
-            </form>
+                        }}>
+                            {
+                                vehicles && vehicles.map(function(vehicle, i){
+                                    return <option key={i} value={vehicle.vin} >{vehicle.model}</option>
+                                })
+                            }
+                        </select>
+                    </label>
+                    <label>
+                        Months:
+                        <input type="number" defaultValue="6" min="1" max="24" name="months"/>
+                    </label>
+                    <input type="submit" value="Submit"/>
+                </form>
+            </div>
+            }
+            {!selectedVehicle && <p>Driver does not own any vehicles</p>}
         </div>
     );
 }
@@ -179,6 +183,8 @@ function VehicleSoldOrTraded({ setOptions, driverAddress, vehicles, setVehicles 
     useEffect(() => {
         if(vehicles && vehicles.length > 0){
             setSelectedVehicle(vehicles[0].vin);
+        } else {
+            setSelectedVehicle(null);
         }
     }, [driverAddress]);
 
@@ -192,6 +198,7 @@ function VehicleSoldOrTraded({ setOptions, driverAddress, vehicles, setVehicles 
 
     return(
         <div className="serviceForm">
+            {selectedVehicle && <div>
             <p>{selectedVehicle}</p>
                 <form onSubmit={submitHandler}>
                     <label>
@@ -208,6 +215,8 @@ function VehicleSoldOrTraded({ setOptions, driverAddress, vehicles, setVehicles 
                     </label>
                     <input type="submit" value="Submit"/>
                 </form>
+            </div>}
+            {!selectedVehicle && <p>Driver does not own any vehicles</p>}
         </div>
     );
 
