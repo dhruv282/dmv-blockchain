@@ -80,6 +80,24 @@ def realID():
         print("ERROR: Could not create driver Real ID :(")
     return redirect(url_for('getDriverInfo', driverAddress=driverAddress))
 
+@apiServer.route('/vaTitle', methods=['GET'])
+def vaTitle():
+    driverAddress = request.args.get("driverAddress")
+    vin = request.args.get("vin")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+
+    try:
+        for v in driverInfo.vehicles:
+            if v.vin == vin:
+                v.updateTitleStateToVA()
+                break
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update vehicle title state to VA :(")
+    return redirect(url_for('getVehicles', driverAddress=driverAddress))
+
 @apiServer.route('/updateAddress', methods=['POST'])
 def updateAddress():
     driverAddress = request.args.get("driverAddress")

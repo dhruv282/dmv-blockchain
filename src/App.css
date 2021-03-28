@@ -147,7 +147,7 @@
   width: 70px;
 }
 
-#createRealID, input[type=submit] {
+#createRealID, #vaTitle, input[type=submit] {
   width: 200;
   background-color: #333;
   color: white;
@@ -155,7 +155,7 @@
   border-color: white;
 }
 
-#createRealID:hover, input[type=submit]:hover {
+#createRealID:hover, #vaTitle:hover, input[type=submit]:hover {
   background-color: white;
   color: black;
   border-color: black;

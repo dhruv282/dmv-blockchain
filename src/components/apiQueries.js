@@ -33,6 +33,13 @@ export function updateAddress(driverAddress, data){
         .catch(error => console.error(error));
 }
 
+export function VATitle(driverAddress, vin){
+    return fetch("/vaTitle?driverAddress="+encodeURIComponent(driverAddress)+"&vin="+vin)
+        .then(res => res.json())
+        .then(data => {return data})
+        .catch(error => console.error(error));
+}
+
 export function getDrivers(){
     return fetch("/drivers")
         .then(res => res.json())
