@@ -1,70 +1,53 @@
-# Getting Started with Create React App
+# DMV-Blockchain
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This program demostrates an application of blockchain technology specifically in the Department of Motor Vehicles (DMV). The usage of this technology maintains the integrity of past records. A record in this context is the information pertaining a driver including vehicles owned.
 
-## Available Scripts
+## Implementation
+The program back-end features blockchain implementation that can be interacted with using APIs and a front-end that provides a intuitive UI that allows for updates to the blockchain.
 
-In the project directory, you can run:
+## Blockchain API Server
+The blockchain data structure is implemented in [Python](https://www.python.org/) and utilizes RSA encryption and SHA-256 hashing schemes from [PyCryptodome](https://github.com/Legrandin/pycryptodome/). Each block in the chain is made up of an `entry` object which consists `driver` objects. This is to allow recording simultaneous updates to multiple `driver` objects such as transferring `vehicle` ownership. The blockchain is initialized with randomly generated drivers and can be accessed and/or updated via the API endpoints implemented using [Flask](https://palletsprojects.com/p/flask/). The following API endpoints are provided:
 
-### `yarn start`
+* `/checkChainValidity`: `GET` method that returns the validity status of the blockchain.
+* `/drivers`: `GET` method that returns driver information in the blockchain
+* `/renewDL`: `POST` method that updates the driver's license expiry date. Requires `driverAddress` parameter and expects `months` in the data body.
+* `/updateAddress`: `POST` method that updates the driver's address. Requires `driverAddress` parameter and expects `address` in the data body.
+* `/realID`: `GET` method that updates the driver's license to a Real ID. Requires `driverAddress` parameter.
+* `/vehicles`: `GET` method that returns vehicles owned by the driver. Requires `driverAddress` parameter.
+* `/updateVehicleOwner`: `POST` method that transfers vehicle ownership from one driver to another. Requires `driverAddress` and `newOwner` parameters and expects vehicle `vin` in the data body.
+* `/vaTitle`: `GET` method that updates vehicle's registration state to VA. Requires `driverAddress` and `vin` parameters.
+* `/vehicleSoldOrTraded`: `POST` method that removes vehicle ownership from driver. Requires `driverAddress` parameter and expects vehicle's `vin` in data body.
+* `/renewReg`: `POST` method that updates vehicle's registration expiry date. Requires `driverAddress` parameter and expects `months` in data body.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Front-End UI
+The program has a front-end implemented in [ReactJS](https://reactjs.org/) that uses the above API endpoints. This interface provides the following functionality:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+* Online Services
+    * Vehicle Registration Renewal
+    * Address Change
+    * Driver License Renewal
+    * Report a Vehicle Sold/Traded
+* Driver/ID
+    * Real ID
+    * Obtain Vital Record
+* Vehicles
+    * Selling/donating a vehicle
+    * Titling a vehicle in Virginia
 
-### `yarn test`
+The features above require a selected driver which by default is the first driver in the dropdown. Additionally, an option to check the chain's validity from any page is also provided.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Running the program
 
-### `yarn build`
+This documentation assumes that [Python 3](https://www.python.org/downloads/) and [Node.js](https://nodejs.org/en/) along with a package manager have been installed. This program can be executed using [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/) which are both package managers for the JavaScript programming language. The front-end is accessible through [localhost:3000](http://localhost:3000) and it interacts with the API server running on [localhost:5000](http://localhost:5000).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Execution using npm
+```shell
+$ npm run start-api
+$ npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Execution using Yarn
+```
+$ yarn start-api
+$ yarn start
+```
