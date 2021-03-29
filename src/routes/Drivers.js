@@ -100,7 +100,7 @@ function VitalRecord({ setOptions, driverAddress, allDrivers, vehicles }){
                     </select>
                     {vehicles.map(function(vehicle, i){
                         if (vehicle.vin === curVehicle){
-                            return <div>
+                            return <div key={i}>
                                 <p><b>Model:</b> {vehicle.model}</p>
                                 <p><b>VIN:</b> {vehicle.vin}</p>
                                 <p><b>Title State:</b> {vehicle.titleState}</p>
