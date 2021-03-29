@@ -98,6 +98,31 @@ def vaTitle():
         print("ERROR: Could not update vehicle title state to VA :(")
     return redirect(url_for('getVehicles', driverAddress=driverAddress))
 
+@apiServer.route('/updateVehicleOwner', methods=['POST'])
+def updateVehicleOwner():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    newOwner = request.args.get("newOwner")
+    newOwnerInfo = blockchain_records.get_driver_info(newOwner)
+    vin = request.form["vin"]
+
+    try:
+        temp = []
+        for v in driverInfo.vehicles:
+            if v.vin == vin:
+                newOwnerInfo.addVehicle(v)
+            else:
+                temp.append(v)
+        driverInfo.vehicles = temp
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        newOwnerKey = getPrivateKey(newOwnerInfo.pubkey)
+        blockchain_records.add_block([driverInfo, newOwnerInfo], [driverKey, newOwnerKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+        newAddress = driverInfo.address
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update vehicle owner :(")
+    return redirect(url_for('getVehicles', driverAddress=driverAddress))
+
 @apiServer.route('/updateAddress', methods=['POST'])
 def updateAddress():
     driverAddress = request.args.get("driverAddress")
