@@ -29,42 +29,60 @@ for i in range(len(drivers)):
 
 apiServer = Flask(__name__)
 
-@apiServer.route('/renewReg', methods=['POST'])
-def renewReg():
+@apiServer.route('/')
+def welcome():
+    return({'msg': "Welcome to the dmv-blockchain API server, please view the documentation to learn more :)"})
+
+@apiServer.route('/checkChainValidity', methods=['GET'])
+def checkChainValidity():
+    return jsonify({"result": blockchain_records.check_chain_validity()})
+
+@apiServer.route('/drivers', methods=['GET'])
+def getDriverInfo():
+    info = []
+    for d in drivers:
+        dInfo = blockchain_records.get_driver_info(d.pubkey)
+        info.append({"fname": dInfo.fname,
+                    "lname": dInfo.lname,
+                    "address": dInfo.address,
+                    "DLexp": dInfo.DLexp,
+                    "realID": dInfo.realID,
+                    "blockchainAddress": dInfo.pubkey})
+    resp = make_response(jsonify(info))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+@apiServer.route('/renewDL', methods=['POST'])
+def renewDL():
     driverAddress = request.args.get("driverAddress")
     driverInfo = blockchain_records.get_driver_info(driverAddress)
-    newExpDate = ""
+    newDLexp = ""
 
     try:
-        for v in driverInfo.vehicles:
-            if v.vin == request.form["vin"]:
-                v.renewRegistration(int(request.form["months"]))
-                driverKey = getPrivateKey(driverInfo.pubkey)
-                blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
-                newExpDate = v.registrationExp
-                break
-    except Exception as e:
-        print(e)
-        print("ERROR: Could not renew registration :(")
-    return jsonify({"status": newExpDate})
-
-@apiServer.route('/vehicleSoldOrTraded', methods=['POST'])
-def vehicleSoldOrTraded():
-    driverAddress = request.args.get("driverAddress")
-    driverInfo = blockchain_records.get_driver_info(driverAddress)
-    updatedVehicles = []
-
-    try:
-        for v in driverInfo.vehicles:
-            if v.vin != request.form["vin"]:
-                updatedVehicles.append(v)
-        driverInfo.vehicles = updatedVehicles
+        driverInfo.renewDL(int(request.form["months"]))
         driverKey = getPrivateKey(driverInfo.pubkey)
         blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+        newDLexp = driverInfo.DLexp
     except Exception as e:
         print(e)
-        print("ERROR: Could not mark vehicle as sold or traded :(")
-    return redirect(url_for('getVehicles', driverAddress=driverAddress))
+        print("ERROR: Could not update address :(")
+    return jsonify({"status": newDLexp})
+
+@apiServer.route('/updateAddress', methods=['POST'])
+def updateAddress():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    newAddress = ""
+
+    try:
+        driverInfo.address = request.form["address"]
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+        newAddress = driverInfo.address
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update address :(")
+    return jsonify({"status": newAddress})
 
 @apiServer.route('/realID', methods=['GET'])
 def realID():
@@ -80,23 +98,21 @@ def realID():
         print("ERROR: Could not create driver Real ID :(")
     return redirect(url_for('getDriverInfo', driverAddress=driverAddress))
 
-@apiServer.route('/vaTitle', methods=['GET'])
-def vaTitle():
+@apiServer.route('/vehicles', methods=['GET'])
+def getVehicles():
     driverAddress = request.args.get("driverAddress")
-    vin = request.args.get("vin")
-    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    vehicles = []
 
-    try:
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    if driverInfo:
         for v in driverInfo.vehicles:
-            if v.vin == vin:
-                v.updateTitleStateToVA()
-                break
-        driverKey = getPrivateKey(driverInfo.pubkey)
-        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
-    except Exception as e:
-        print(e)
-        print("ERROR: Could not update vehicle title state to VA :(")
-    return redirect(url_for('getVehicles', driverAddress=driverAddress))
+            vehicles.append({"model": v.model,
+                            "titleState": v.titleState,
+                            "registrationExp": v.registrationExp,
+                            "vin": v.vin})
+    resp = make_response(jsonify(vehicles))
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 @apiServer.route('/updateVehicleOwner', methods=['POST'])
 def updateVehicleOwner():
@@ -124,72 +140,60 @@ def updateVehicleOwner():
         print("ERROR: Could not update vehicle owner :(")
     return redirect(url_for('getVehicles', driverAddress=driverAddress))
 
-@apiServer.route('/updateAddress', methods=['POST'])
-def updateAddress():
+@apiServer.route('/vaTitle', methods=['GET'])
+def vaTitle():
     driverAddress = request.args.get("driverAddress")
+    vin = request.args.get("vin")
     driverInfo = blockchain_records.get_driver_info(driverAddress)
-    newAddress = ""
 
     try:
-        driverInfo.address = request.form["address"]
-        driverKey = getPrivateKey(driverInfo.pubkey)
-        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
-        newAddress = driverInfo.address
-    except Exception as e:
-        print(e)
-        print("ERROR: Could not update address :(")
-    return jsonify({"status": newAddress})
-
-@apiServer.route('/renewDL', methods=['POST'])
-def renewDL():
-    driverAddress = request.args.get("driverAddress")
-    driverInfo = blockchain_records.get_driver_info(driverAddress)
-    newDLexp = ""
-
-    try:
-        driverInfo.renewDL(int(request.form["months"]))
-        driverKey = getPrivateKey(driverInfo.pubkey)
-        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
-        newDLexp = driverInfo.DLexp
-    except Exception as e:
-        print(e)
-        print("ERROR: Could not update address :(")
-    return jsonify({"status": newDLexp})
-
-@apiServer.route('/drivers', methods=['GET'])
-def getDriverInfo():
-    info = []
-    for d in drivers:
-        dInfo = blockchain_records.get_driver_info(d.pubkey)
-        info.append({"fname": dInfo.fname,
-                    "lname": dInfo.lname,
-                    "address": dInfo.address,
-                    "DLexp": dInfo.DLexp,
-                    "realID": dInfo.realID,
-                    "blockchainAddress": dInfo.pubkey})
-    resp = make_response(jsonify(info))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-@apiServer.route('/vehicles', methods=['GET'])
-def getVehicles():
-    driverAddress = request.args.get("driverAddress")
-    vehicles = []
-
-    driverInfo = blockchain_records.get_driver_info(driverAddress)
-    if driverInfo:
         for v in driverInfo.vehicles:
-            vehicles.append({"model": v.model,
-                            "titleState": v.titleState,
-                            "registrationExp": v.registrationExp,
-                            "vin": v.vin})
-    resp = make_response(jsonify(vehicles))
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
+            if v.vin == vin:
+                v.updateTitleStateToVA()
+                break
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update vehicle title state to VA :(")
+    return redirect(url_for('getVehicles', driverAddress=driverAddress))
 
-@apiServer.route('/checkChainValidity', methods=['GET'])
-def checkChainValidity():
-    return jsonify({"result": blockchain_records.check_chain_validity()})
+@apiServer.route('/vehicleSoldOrTraded', methods=['POST'])
+def vehicleSoldOrTraded():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    updatedVehicles = []
+
+    try:
+        for v in driverInfo.vehicles:
+            if v.vin != request.form["vin"]:
+                updatedVehicles.append(v)
+        driverInfo.vehicles = updatedVehicles
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not mark vehicle as sold or traded :(")
+    return redirect(url_for('getVehicles', driverAddress=driverAddress))
+
+@apiServer.route('/renewReg', methods=['POST'])
+def renewReg():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+    newExpDate = ""
+
+    try:
+        for v in driverInfo.vehicles:
+            if v.vin == request.form["vin"]:
+                v.renewRegistration(int(request.form["months"]))
+                driverKey = getPrivateKey(driverInfo.pubkey)
+                blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+                newExpDate = v.registrationExp
+                break
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not renew registration :(")
+    return jsonify({"status": newExpDate})
 
 if __name__ == "__main__":
     apiServer.run(debug=True)
