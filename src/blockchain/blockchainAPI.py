@@ -110,6 +110,7 @@ def updateVehicleOwner():
         temp = []
         for v in driverInfo.vehicles:
             if v.vin == vin:
+                v.ownerPubkey = newOwner
                 newOwnerInfo.addVehicle(v)
             else:
                 temp.append(v)
