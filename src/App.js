@@ -61,6 +61,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        {allDrivers && selectedDriver && driverAddress ?
         <header className="App-header">
           <button onClick={() =>
             checkChainValidity().then(data => {
@@ -79,7 +80,7 @@ function App() {
           <Switch>
             {routes}
           </Switch>
-        </header>
+        </header> : <h1 id="offlineMsg">API server is offline 😰</h1>}
       </div>
     </Router>
   );
