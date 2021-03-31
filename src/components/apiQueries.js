@@ -26,6 +26,13 @@ export function createRealID(driverAddress){
         .catch(error => console.error(error));
 }
 
+export function updatePracticeExamScore(driverAddress, data){
+    return fetch("/updatePracticeExamScore?driverAddress="+encodeURIComponent(driverAddress), {method: 'POST', body: data})
+        .then(res => res.json())
+        .then(data => {return data})
+        .catch(error => console.error(error));
+}
+
 export function updateAddress(driverAddress, data){
     return fetch("/updateAddress?driverAddress="+encodeURIComponent(driverAddress), {method: 'POST', body: data})
         .then(res => res.json())

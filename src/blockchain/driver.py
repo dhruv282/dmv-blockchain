@@ -10,6 +10,7 @@ class driver:
         self.DLexp = DLexp
         self.vehicles = []
         self.realID = False
+        self.testExamScore = 0
     
     def addVehicle(self, vehicle):
         if vehicle in self.vehicles:
@@ -32,11 +33,17 @@ class driver:
     def renewDL(self, durationInMonths):
         self.DLexp += datetime.timedelta(days=30*durationInMonths)
 
+    def updateTestExamScore(self, newScore):
+        if newScore < 0:
+            raise Exception("Score needs to be 0 or more")
+        else:
+            self.testExamScore = newScore
+
     def concat(self):
         concat =  self.pubkey + self.fname + self.lname + self.address + self.DLexp.strftime('%m/%d/%Y')
         for v in self.vehicles:
             concat += v.concat()
-        concat += str(self.realID)
+        concat += str(self.realID) + str(self.testExamScore)
         return concat
     
     def generate_driver_signature(self, private_key):

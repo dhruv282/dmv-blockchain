@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import {useRouteMatch} from "react-router-dom";
 
 import ServiceOptions from '../components/ServiceOptions';
-import { getVehicles, createRealID } from '../components/apiQueries';
+import { getVehicles, createRealID, updatePracticeExamScore } from '../components/apiQueries';
 
 export default function Drivers({ optionState, setOptionState, driverAddress, allDrivers, setAllDrivers }){
     let match = useRouteMatch();
@@ -10,12 +10,45 @@ export default function Drivers({ optionState, setOptionState, driverAddress, al
 
     useEffect(() => getVehicles(driverAddress).then(res=>{setVehicles(res)}),[driverAddress]);
 
-    let services = [{name: "Practice Exams", route: `${match.url}/practiceExams`},
+    let services = [{name: "Practice Exams", route: `${match.url}/practiceExams`, component: <PracticeExams setOptions={setOptionState} driverAddress={driverAddress} allDrivers={allDrivers} setAllDrivers={setAllDrivers} />},
                     {name: "Real ID", route: `${match.url}/createRealID`, component: <RealID setOptions={setOptionState} driverAddress={driverAddress} allDrivers={allDrivers} setAllDrivers={setAllDrivers} />},
                     {name: "Obtain Vital Record", route: `${match.url}/obtainVitalRecord`, component: <VitalRecord setOptions={setOptionState} driverAddress={driverAddress} allDrivers={allDrivers} vehicles={vehicles} /> }];
 
     return(
         <ServiceOptions services={services} optionState={optionState} setOptions={setOptionState}/>
+    );
+}
+
+function PracticeExams({ setOptions, driverAddress, allDrivers, setAllDrivers }){
+    setOptions(false);
+    let [score, setScore]  = useState(null);
+
+    useEffect(() => {
+        for(let i in allDrivers){
+            if(allDrivers[i].blockchainAddress === driverAddress){
+                setScore(allDrivers[i].practiceTestScore);
+                break;
+            }
+        }
+    },[driverAddress, allDrivers]);
+
+    let submitHandler = (event) => {
+        event.preventDefault();
+        let data = new FormData(event.target);
+        updatePracticeExamScore(driverAddress, data).then(data => setAllDrivers(data));
+    }
+
+    return(
+        <div className="serviceForm">
+            <p>Score: {score}%</p>
+            <form onSubmit={submitHandler}>
+                <label>
+                    New score:
+                    <input type="number" min="0" max="100" name="score"/>
+                </label>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
     );
 }
 
@@ -86,6 +119,7 @@ function VitalRecord({ setOptions, driverAddress, allDrivers, vehicles }){
             <p><b>Address:</b> {driverInfo.address}</p>
             <p><b>License Exp:</b> {driverInfo.DLexp}</p>
             <p><b>Real ID:</b> {driverInfo.realID ? "True" : "False"}</p>
+            <p><b>Practice Test Score:</b> {driverInfo.practiceTestScore}%</p>
 
             {curVehicle && 
                 <div>

@@ -47,6 +47,7 @@ def getDriverInfo():
                     "address": dInfo.address,
                     "DLexp": dInfo.DLexp,
                     "realID": dInfo.realID,
+                    "practiceTestScore": dInfo.testExamScore,
                     "blockchainAddress": dInfo.pubkey})
     resp = make_response(jsonify(info))
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -96,7 +97,21 @@ def realID():
     except Exception as e:
         print(e)
         print("ERROR: Could not create driver Real ID :(")
-    return redirect(url_for('getDriverInfo', driverAddress=driverAddress))
+    return redirect(url_for('getDriverInfo'))
+
+@apiServer.route('/updatePracticeExamScore', methods=['POST'])
+def updatePracticeExamScore():
+    driverAddress = request.args.get("driverAddress")
+    driverInfo = blockchain_records.get_driver_info(driverAddress)
+
+    try:
+        driverInfo.updateTestExamScore(int(request.form["score"]))
+        driverKey = getPrivateKey(driverInfo.pubkey)
+        blockchain_records.add_block([driverInfo], [driverKey], universal_miner.publickey().export_key().decode(), universal_miner.export_key().decode())
+    except Exception as e:
+        print(e)
+        print("ERROR: Could not update practice exam score :(")
+    return redirect(url_for('getDriverInfo'))
 
 @apiServer.route('/vehicles', methods=['GET'])
 def getVehicles():
