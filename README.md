@@ -3,7 +3,7 @@
 This program demostrates an application of blockchain technology specifically in the Department of Motor Vehicles (DMV). The usage of this technology maintains the integrity of past records. A record in this context is the information pertaining a driver including vehicles owned.
 
 ## Implementation
-The program back-end features blockchain implementation that can be interacted with using APIs and a front-end that provides a intuitive UI that allows for updates to the blockchain.
+The program back-end features blockchain implementation that can be interacted with using APIs and a front-end that provides an intuitive UI that allows for updates to the blockchain.
 
 ### Blockchain API Server
 The blockchain data structure is implemented in [Python](https://www.python.org/) and utilizes RSA encryption and SHA-256 hashing schemes from [PyCryptodome](https://github.com/Legrandin/pycryptodome/). Each block in the chain is made up of an `entry` object which consists `driver` objects. This is to allow recording simultaneous updates to multiple `driver` objects such as transferring `vehicle` ownership. The blockchain is initialized with randomly generated drivers and can be accessed and/or updated via the API endpoints implemented using [Flask](https://palletsprojects.com/p/flask/). The following API endpoints are provided:

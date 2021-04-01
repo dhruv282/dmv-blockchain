@@ -97,7 +97,7 @@ function VitalRecord({ setOptions, driverAddress, allDrivers, vehicles }){
 
     useEffect(() => {
         for(let i in allDrivers){
-            if(allDrivers[i]. blockchainAddress == driverAddress){
+            if(allDrivers[i]. blockchainAddress === driverAddress){
                 setDriverInfo(allDrivers[i]);
                 break;
             }
